@@ -1,10 +1,3 @@
-// This file is part of React-Invenio-Forms
-// Copyright (C) 2020 CERN.
-// Copyright (C) 2020 Northwestern University.
-//
-// React-Invenio-Forms is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
-
 import React, { Component, useState } from "react";
 import { Field, FastField } from "formik";
 import { Accordion, Button, Container, Icon } from "semantic-ui-react";
@@ -12,7 +5,7 @@ import { i18next } from "@translations/invenio_app_rdm/i18next";
 import _omit from "lodash/omit";
 import _get from "lodash/get";
 
-export class AccordionField extends Component {
+class AccordionField extends Component {
   hasError(errors, initialValues = undefined, values = undefined) {
     const { includesPaths } = this.props;
     for (const errorPath in errors) {
@@ -116,3 +109,5 @@ AccordionField.defaultProps = {
   children: null,
   ui: null,
 };
+
+export default AccordionField;

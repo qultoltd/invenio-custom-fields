@@ -1,16 +1,9 @@
-// This file is part of Invenio-RDM-Records
-// Copyright (C) 2020-2023 CERN.
-// Copyright (C) 2020-2022 Northwestern University.
-//
-// Invenio-RDM-Records is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
-
 import React, { useState } from "react";
 import { Button, Icon, Modal } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
-import { ListAndFilterCustomFields } from "./ListAndFilterCustomFields";
+import ListAndFilterCustomFields from "./ListAndFilterCustomFields";
 
-export const AddDiscoverableFieldsModal = ({ sections, onSave }) => {
+const AddDiscoverableFieldsModal = ({ sections, onSave }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSection, setSelectedSection] = useState();
   const [loading, setLoading] = useState(false);
@@ -49,12 +42,15 @@ export const AddDiscoverableFieldsModal = ({ sections, onSave }) => {
         <Icon name="plus" />
         {i18next.t("Add section")}
       </Button>
+
       <Modal open={modalOpen}>
         <Modal.Header>{i18next.t("Add section")}</Modal.Header>
+
         <ListAndFilterCustomFields
           onSelectSection={handleSelectSection}
           sections={sections || []}
         />
+
         <Modal.Actions>
           <Button
             icon
@@ -65,6 +61,7 @@ export const AddDiscoverableFieldsModal = ({ sections, onSave }) => {
             <Icon name="cancel" />
             {i18next.t("Close")}
           </Button>
+
           <Button
             icon
             labelPosition="left"
@@ -80,3 +77,5 @@ export const AddDiscoverableFieldsModal = ({ sections, onSave }) => {
     </>
   );
 };
+
+export default AddDiscoverableFieldsModal;

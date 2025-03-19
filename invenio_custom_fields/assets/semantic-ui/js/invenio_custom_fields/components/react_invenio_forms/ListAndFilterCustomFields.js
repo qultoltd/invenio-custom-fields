@@ -10,7 +10,7 @@ import {
 } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 
-export const ListAndFilterCustomFields = ({ sections, onSelectSection }) => {
+const ListAndFilterCustomFields = ({ sections, onSelectSection }) => {
   const [filteredFieldsList, setFilteredFieldsList] = useState([]);
 
   const dropdownOptions = useMemo(
@@ -64,6 +64,7 @@ export const ListAndFilterCustomFields = ({ sections, onSelectSection }) => {
           />
         </span>
       </Segment>
+
       <Modal.Content scrolling>
         <Item.Group divided relaxed>
           {Object.entries(filteredFieldsList).map(([key, value]) => {
@@ -78,11 +79,13 @@ export const ListAndFilterCustomFields = ({ sections, onSelectSection }) => {
               >
                 <Item.Content>
                   <Item.Header className="mb-5">{value.label}</Item.Header>
+
                   <Item.Description>
                     <Grid>
                       <Grid.Column width={12}>{value.note}</Grid.Column>
                     </Grid>
                   </Item.Description>
+
                   <Item.Extra>
                     <Label>
                       <Icon name={value.section.icon} />
@@ -103,9 +106,11 @@ export const ListAndFilterCustomFields = ({ sections, onSelectSection }) => {
                 </Item.Content>
               </Item>
             );
-          })}{" "}
+          })}
         </Item.Group>
       </Modal.Content>
     </>
   );
 };
+
+export default ListAndFilterCustomFields;

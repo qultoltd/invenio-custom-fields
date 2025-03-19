@@ -1,7 +1,7 @@
 import React from "react";
-import { CustomFields } from "../react_invenio_forms/CustomFields";
+import CustomFields from "../react_invenio_forms/CustomFields";
 
-export const CustomDepositFormCustomFields = ({ record, customFieldsUI }) => {
+const CustomDepositFormCustomFields = ({ record, customFieldsUI }) => {
   return (
     <CustomFields
       config={customFieldsUI}
@@ -15,3 +15,5 @@ export const CustomDepositFormCustomFields = ({ record, customFieldsUI }) => {
     />
   );
 };
+
+export default CustomDepositFormCustomFields;

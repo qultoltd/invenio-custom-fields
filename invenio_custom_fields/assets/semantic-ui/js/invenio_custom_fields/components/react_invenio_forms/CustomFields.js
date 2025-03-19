@@ -1,19 +1,12 @@
-// This file is part of React-Invenio-Forms
-// Copyright (C) 2022 CERN.
-// Copyright (C) 2022 Northwestern University.
-//
-// React-Invenio-Forms is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
-
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import _ from "lodash";
 import { useFormikContext } from "formik";
 import { loadWidgetsFromConfig } from "react-invenio-forms";
 import { Container, Divider } from "semantic-ui-react";
-import { AccordionField } from "./AccordionField";
-import { AddDiscoverableFieldsModal } from "./AddDiscoverableFieldsModal";
+import AccordionField from "./AccordionField";
+import AddDiscoverableFieldsModal from "./AddDiscoverableFieldsModal";
 
-export const CustomFields = ({
+const CustomFields = ({
   record,
   templateLoaders,
   includesPaths,
@@ -27,6 +20,18 @@ export const CustomFields = ({
 
   const formikProps = useFormikContext();
 
+  const filledRecordCustomFields = useMemo(() => {
+    let filledFields = [];
+
+    if (record && !_.isEmpty(record.custom_fields)) {
+      filledFields = Object.keys(record.custom_fields).map(
+        (key) => `custom_fields.${key}`
+      );
+    }
+
+    return filledFields;
+  }, [record]);
+
   useEffect(() => {
     populateConfig();
   }, []);
@@ -39,23 +44,8 @@ export const CustomFields = ({
     }
   }, [newSection]);
 
-  const hasValue = (section) => {
-    let filledRecordCustomFields = [];
-
-    if (record && !_.isEmpty(record.custom_fields)) {
-      filledRecordCustomFields = Object.keys(record.custom_fields).map(
-        (key) => `custom_fields.${key}`
-      );
-    }
-
-    for (const field of section.fields) {
-      if (filledRecordCustomFields.includes(field.key)) {
-        return true;
-      }
-    }
-
-    return false;
-  };
+  const hasValue = (section) =>
+    section.fields.some((item) => filledRecordCustomFields.includes(item.key));
 
   const populateConfig = async () => {
     try {
@@ -115,11 +105,7 @@ export const CustomFields = ({
       );
 
       discoverable.push(newSection);
-      discoverable.sort(
-        (a, b) =>
-          discoverableSectionsOrder[a.section] -
-          discoverableSectionsOrder[b.section]
-      );
+      discoverable.sort(compareDiscoverableSections);
       return [...simple, ...discoverable];
     });
     setDiscoverFieldsSections((prevState) =>
@@ -144,16 +130,15 @@ export const CustomFields = ({
       });
 
       updatedDiscoverFieldsSections.push(section);
-      updatedDiscoverFieldsSections.sort(
-        (a, b) =>
-          discoverableSectionsOrder[a.section] -
-          discoverableSectionsOrder[b.section]
-      );
+      updatedDiscoverFieldsSections.sort(compareDiscoverableSections);
     }
 
     setSections(updatedSections);
     setDiscoverFieldsSections(updatedDiscoverFieldsSections);
   };
+
+  const compareDiscoverableSections = (a, b) =>
+    discoverableSectionsOrder[a.section] - discoverableSectionsOrder[b.section];
 
   const loadCustomFieldsWidgets = async () => {
     const sections = [];
@@ -187,31 +172,32 @@ export const CustomFields = ({
   return (
     <>
       {sections &&
-        sections.map((section) => {
-          const {
+        sections.map(
+          ({
             fields,
             paths,
             displaySection = true,
             section: sectionName,
             discoverable_fields,
-          } = section;
-          return displaySection ? (
-            <AccordionField
-              id={sectionName}
-              key={`section-${sectionName}`}
-              includesPaths={paths}
-              label={sectionName}
-              active
-              deletable={discoverable_fields}
-              onDeleteSection={handleDeleteSection}
-            >
-              {fields}
-            </AccordionField>
-          ) : (
-            <Container key="custom-fields-section">{fields}</Container>
-          );
-        })}
-      {discoverFieldsSections && discoverFieldsSections.length > 0 && (
+          }) =>
+            displaySection ? (
+              <AccordionField
+                id={sectionName}
+                key={`section-${sectionName}`}
+                includesPaths={paths}
+                label={sectionName}
+                active
+                deletable={discoverable_fields}
+                onDeleteSection={handleDeleteSection}
+              >
+                {fields}
+              </AccordionField>
+            ) : (
+              <Container key="custom-fields-section">{fields}</Container>
+            )
+        )}
+
+      {discoverFieldsSections?.length > 0 && (
         <>
           <Divider fitted className="rel-mb-1" />
           <AddDiscoverableFieldsModal
@@ -227,3 +213,5 @@ export const CustomFields = ({
 CustomFields.defaultProps = {
   includesPaths: (fields) => fields.map((field) => field.key),
 };
+
+export default CustomFields;
